@@ -22,69 +22,91 @@ public class LiquidParticle : MonoBehaviour {
 		verts = new Vector3[sides * 2];
 	}
 
-	
+	private void FixedUpdate() {
 
-	private void Update() {
+		// Reset rotation
+		transform.rotation = Quaternion.identity;
 
 		// Get corner verts
 		for(int i = 0; i < sides; i++) {
 			Vector3 vert = Vector3.forward * radius;
 			vert = Quaternion.Euler(0, (360f / sides) * i, 0) * vert;
-			//vert += transform.position;
-			//Debug.DrawLine(transform.position, transform.position + vert, Color.black);
-			//vert += new Vector3(transform.position.x, 0, transform.position.z);
-			//vert += transform.position;
 			verts[i] = vert;
 		}
 
-		if(neighbor && Vector3.Distance(transform.position, neighbor.transform.position) < breakThreshold) {
+		// Connect to neighbor if there is one
+		if(neighbor) {
 
-			// Assign verts to mesh
-			for(int i = 0; i < sides; i ++) {
-				verts[sides + i] = neighbor.verts[i] + neighbor.transform.position - transform.position;
-				//verts[sides + i] -= transform.position;
-				verts[sides + i] += Vector3.down * .1f;
+			// Break connection if neighbor is too far
+			if(Vector3.Distance(transform.position, neighbor.transform.position) > breakThreshold) {
+				neighbor = null;
 			}
-			mesh.vertices = verts;
+			else {
 
-			// Make tris
-			int[] tris = new int[(sides * 2) * 3 ];
-			for(int tri = 0; tri < tris.Length / 3; tri++) {
-
-				Color debugColor;
-
-				// Three points per tri
-				// tris[point..point+2]
-				int point = tri * 3;
-
-				// Pass over the last tri
-				// TODO: Don't pass over the last tri
-				if(tri == tris.Length / 3 - 1) {
-					break;
+				// Add neighbor verts
+				for(int i = 0; i < sides; i++) {
+					verts[sides + i] = neighbor.verts[i] + neighbor.transform.position - transform.position;
+					/* 
+					 * The following line is compensation for the
+					 * spacing that otherwise shows between particles.
+					 * 
+					 * I'm pretty sure this happens because newer
+					 * particles execute before their neighbors update
+					 * (fall slightly down due to gravity).
+					 * 
+					 * It does not appear to be possible to make newer
+					 * particles execute after their neighbors, and
+					 * honestly it's probably not worth it, as this
+					 * compensation is good enough from a distance.
+					 * 
+					 * Note that this is not framerate dependant
+					 * because it happens in a FixedUpdate.
+					 */
+					verts[sides + i] += Vector3.down * 0.015f;
 				}
 
-				// Even tris
-				if(tri % 2 == 0) {
-					tris[point]		= tri / 2 + 8;
-					tris[point + 1]	= tri / 2 + 1;
-					tris[point + 2]	= tri / 2;
-					debugColor = Color.white;
+				// Make tris
+				int[] tris = new int[(sides * 2) * 3];
+				for(int tri = 0; tri < tris.Length / 3; tri++) {
+
+					// Three points per tri
+					// tris[point..point+2]
+					int point = tri * 3;
+
+					// Even tris
+					if(tri % 2 == 0) {
+						tris[point]		= tri / 2 + 8;
+						tris[point + 1] = tri / 2 + 1;
+						tris[point + 2] = tri / 2;
+					}
+
+					// Odd tris
+					else {
+						tris[point]		= (tri - 1) / 2 + 8;
+						tris[point + 1] = (tri - 1) / 2 + 9;
+						tris[point + 2] = (tri - 1) / 2 + 1;
+					}
+
+					// Stitch last quad
+					if(tri == tris.Length / 3 - 1) {
+						tris[point + 1] = tris[point + 2];
+						tris[point + 2] = 0;
+					}
+					if(tri == tris.Length / 3 - 2) {
+						tris[point + 2] = tris[point + 2];
+						tris[point + 1] = 0;
+					}
 				}
 
-				// Odd tris
-				else {
-					tris[point]		= (tri - 1) / 2 + 8;
-					tris[point + 1]	= (tri - 1) / 2 + 9;
-					tris[point + 2]	= (tri - 1) / 2 + 1;
-					debugColor = Color.red;
-				}
-
-				// Debug
-				//Debug.DrawLine(	verts[tris[point]],		verts[tris[point + 1]], debugColor);
-				//Debug.DrawLine(	verts[tris[point]],		verts[tris[point + 2]], debugColor);
-				//Debug.DrawLine(	verts[tris[point + 1]],	verts[tris[point + 2]], debugColor);
+				// Apply changes
+				mesh.vertices = verts;
+				mesh.triangles = tris;
 			}
-			mesh.triangles = tris;
+		}
+
+		// Draw self if no neighbor
+		if(!neighbor) {
+			//TODO
 		}
 	}
 }
