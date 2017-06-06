@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: f16f29db0ce3ca74e91be219c61df843
+timeCreated: 1496712425
+licenseType: Free
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - liquidParticlePrefab: {fileID: 1425982505746028, guid: 20429a54a3118a64391547e038c71b30,
+      type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
