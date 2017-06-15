@@ -8,7 +8,9 @@ public class LiquidVolume : MonoBehaviour {
 	// Public
 	public Mesh originalMesh;
 	public Material material; //TODO: recieve material from liquid type
-	public float yBottom, yTop, fullness, cubeScale;
+	public float yBottom, yTop, widthBottom, widthTop, cubeScale;
+	[Range(0, 1)]
+	public float fullness;
 
 	// Private
 	private MeshFilter meshFilter;
@@ -25,7 +27,43 @@ public class LiquidVolume : MonoBehaviour {
 
 	private void FixedUpdate() {
 
+		// Don't show if empty
+		GetComponent<MeshRenderer>().enabled = fullness > Mathf.Epsilon;
+		//GetComponent<MeshRenderer>().enabled = false; // to make it easier to see while testing
+
+		// Reset rotation before beginning
 		transform.localRotation = Quaternion.identity;
+
+		// Find rotated top and bottom positions
+
+		Vector3 bottomCenter = Vector3.up;
+		Vector3 topCenter = Vector3.up;
+
+		if(	(transform.parent.transform.rotation.eulerAngles.x > 90 && transform.parent.transform.rotation.eulerAngles.x < 360 - 90)
+		||	(transform.parent.transform.rotation.eulerAngles.z > 90 && transform.parent.transform.rotation.eulerAngles.z < 360 - 90)) {
+			bottomCenter *= yTop;
+			topCenter *= yBottom;
+		}
+		else {
+			bottomCenter *= yBottom;
+			topCenter *= yTop;
+		}
+
+		Vector3 top = topCenter;
+		Vector3 bottom = bottomCenter;
+
+		int iterations = 32;
+		for(int i = 0; i < iterations + 1; i++) {
+			Quaternion adjustmentRotation = Quaternion.AngleAxis(i * (360 / iterations), Vector3.up);
+			Vector3 adjustedBottom = transform.parent.transform.rotation * (bottomCenter + adjustmentRotation * (Vector3.forward * widthBottom));
+			Vector3 adjustedTop = transform.parent.transform.rotation * (topCenter + adjustmentRotation * (Vector3.forward * widthTop));
+			if(bottom == bottomCenter || adjustedBottom.y <= bottom.y) {
+				bottom = adjustedBottom;
+			}
+			if(top == topCenter ||  adjustedTop.y >= top.y) {
+				top = adjustedTop;
+			}
+		}
 
 		// Place original
 		GameObject original = new GameObject();
@@ -35,8 +73,12 @@ public class LiquidVolume : MonoBehaviour {
 		// Place cube
 		GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
 		cube.transform.localScale = Vector3.one * cubeScale;
-		//TODO: FIX: The following only respects y, which is obviously wrong
-		cube.transform.position = Vector3.up * (yBottom + (cubeScale / 2) + (fullness * (yTop - yBottom)));
+		cube.transform.position += new Vector3(
+			bottom.x + (fullness * (top.x - bottom.x)),
+			bottom.y + (fullness * (top.y - bottom.y)),
+			bottom.z + (fullness * (top.z - bottom.z))
+		);
+		cube.transform.position += Vector3.up * (cubeScale / 2);
 
 		// Perform boolean operation
 		Mesh m = CSG.Subtract(original, cube);
