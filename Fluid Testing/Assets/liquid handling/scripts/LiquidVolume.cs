@@ -8,7 +8,7 @@ public class LiquidVolume : MonoBehaviour {
 	// Public
 	public Mesh originalMesh;
 	public Material material; //TODO: recieve material from liquid type
-	public float yBottom, yTop, widthBottom, widthTop, cubeScale;
+	public float yBottom, yTop, widthBottom, widthTop, cubeScale, minFullness;
 	[Range(0, 1)]
 	public float fullness;
 
@@ -23,13 +23,13 @@ public class LiquidVolume : MonoBehaviour {
 		gameObject.AddComponent<MeshFilter>();
 		gameObject.AddComponent<MeshRenderer>().material = material;
 		gameObject.AddComponent<MeshCollider>().convex = true;
+		GetComponent<MeshCollider>().isTrigger = true;
 	}
 
 	private void FixedUpdate() {
 
 		// Don't show if empty
-		GetComponent<MeshRenderer>().enabled = fullness > Mathf.Epsilon;
-		//GetComponent<MeshRenderer>().enabled = false; // to make it easier to see while testing
+		GetComponent<MeshRenderer>().enabled = fullness > minFullness;
 
 		// Reset rotation before beginning
 		transform.localRotation = Quaternion.identity;
@@ -72,11 +72,12 @@ public class LiquidVolume : MonoBehaviour {
 
 		// Place cube
 		GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+		cube.GetComponent<BoxCollider>().enabled = false;
 		cube.transform.localScale = Vector3.one * cubeScale;
 		cube.transform.position += new Vector3(
-			bottom.x + (fullness * (top.x - bottom.x)),
-			bottom.y + (fullness * (top.y - bottom.y)),
-			bottom.z + (fullness * (top.z - bottom.z))
+			bottom.x + (Mathf.Max(fullness, minFullness) * (top.x - bottom.x)),
+			bottom.y + (Mathf.Max(fullness, minFullness) * (top.y - bottom.y)),
+			bottom.z + (Mathf.Max(fullness, minFullness) * (top.z - bottom.z))
 		);
 		cube.transform.position += Vector3.up * (cubeScale / 2);
 
@@ -89,5 +90,9 @@ public class LiquidVolume : MonoBehaviour {
 		// Remove original and cube
 		Destroy(original);
 		Destroy(cube);
+	}
+
+	public void addLiquid(/*Liquid l*/ float amount) {
+		fullness = Mathf.Max(Mathf.Min(fullness + amount, 1), 0);
 	}
 }

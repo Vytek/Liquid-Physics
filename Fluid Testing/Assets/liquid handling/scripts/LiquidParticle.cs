@@ -109,4 +109,16 @@ public class LiquidParticle : MonoBehaviour {
 			//TODO
 		}
 	}
+
+	private void OnTriggerEnter(Collider c) {
+
+		LiquidVolume volume = c.gameObject.GetComponent<LiquidVolume>();
+		if(volume) {
+			volume.addLiquid(0.02f);
+			gameObject.layer = LayerMask.NameToLayer("LiquidParticleUsed");
+			neighbor = null;
+			GetComponent<MeshRenderer>().enabled = false;
+			Destroy(gameObject, 0.1f);
+		}
+	}
 }
