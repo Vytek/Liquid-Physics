@@ -5,6 +5,7 @@ using UnityEngine;
 public class LiquidParticle : MonoBehaviour {
 
 	// Public
+	public LiquidEmitter origin;
 	public int sides;
 	public float	breakThreshold,
 					radius;
@@ -20,6 +21,9 @@ public class LiquidParticle : MonoBehaviour {
 
 		mesh = GetComponent<MeshFilter>().mesh;
 		verts = new Vector3[sides * 2];
+
+		// Destroy after a while
+		Destroy(gameObject, 5);
 	}
 
 	private void FixedUpdate() {
@@ -113,7 +117,7 @@ public class LiquidParticle : MonoBehaviour {
 	private void OnTriggerEnter(Collider c) {
 
 		LiquidVolume volume = c.gameObject.GetComponent<LiquidVolume>();
-		if(volume) {
+		if(volume && volume != origin) {
 			volume.addLiquid(0.02f);
 			gameObject.layer = LayerMask.NameToLayer("LiquidParticleUsed");
 			neighbor = null;

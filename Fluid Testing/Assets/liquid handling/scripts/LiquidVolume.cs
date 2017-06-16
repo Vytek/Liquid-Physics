@@ -11,11 +11,13 @@ public class LiquidVolume : MonoBehaviour {
 	public float yBottom, yTop, widthBottom, widthTop, cubeScale, minFullness;
 	[Range(0, 1)]
 	public float fullness;
+	public LiquidEmitter liquidEmitterPrefab;
 
 	// Private
 	private MeshFilter meshFilter;
 	private MeshRenderer meshRenderer;
 	private MeshCollider meshCollider;
+	private LiquidEmitter emitter;
 
 	private void Awake() {
 
@@ -36,11 +38,13 @@ public class LiquidVolume : MonoBehaviour {
 
 		// Find rotated top and bottom positions
 
+		bool inverted = (transform.parent.transform.rotation.eulerAngles.x > 90 && transform.parent.transform.rotation.eulerAngles.x < 360 - 90)
+		|| (transform.parent.transform.rotation.eulerAngles.z > 90 && transform.parent.transform.rotation.eulerAngles.z < 360 - 90);
+
 		Vector3 bottomCenter = Vector3.up;
 		Vector3 topCenter = Vector3.up;
 
-		if(	(transform.parent.transform.rotation.eulerAngles.x > 90 && transform.parent.transform.rotation.eulerAngles.x < 360 - 90)
-		||	(transform.parent.transform.rotation.eulerAngles.z > 90 && transform.parent.transform.rotation.eulerAngles.z < 360 - 90)) {
+		if(inverted) {
 			bottomCenter *= yTop;
 			topCenter *= yBottom;
 		}
@@ -49,8 +53,9 @@ public class LiquidVolume : MonoBehaviour {
 			topCenter *= yTop;
 		}
 
-		Vector3 top = topCenter;
 		Vector3 bottom = bottomCenter;
+		Vector3 top = topCenter;
+		Vector3 spillPoint = topCenter;
 
 		int iterations = 32;
 		for(int i = 0; i < iterations + 1; i++) {
@@ -59,8 +64,14 @@ public class LiquidVolume : MonoBehaviour {
 			Vector3 adjustedTop = transform.parent.transform.rotation * (topCenter + adjustmentRotation * (Vector3.forward * widthTop));
 			if(bottom == bottomCenter || adjustedBottom.y <= bottom.y) {
 				bottom = adjustedBottom;
+				if(!inverted) {
+					spillPoint = adjustedTop;
+				}
+				else {
+					spillPoint = adjustedBottom;
+				}
 			}
-			if(top == topCenter ||  adjustedTop.y >= top.y) {
+			if(top == topCenter || adjustedTop.y >= top.y) {
 				top = adjustedTop;
 			}
 		}
@@ -79,6 +90,25 @@ public class LiquidVolume : MonoBehaviour {
 			bottom.y + (Mathf.Max(fullness, minFullness) * (top.y - bottom.y)),
 			bottom.z + (Mathf.Max(fullness, minFullness) * (top.z - bottom.z))
 		);
+
+		// Check for spilling
+		if(cube.transform.position.y >= spillPoint.y && fullness > 0) {
+			if(!emitter) {
+				emitter = Instantiate(liquidEmitterPrefab, spillPoint, Quaternion.identity, transform);
+				emitter.name = "spill emitter";
+				emitter.origin = this;
+			}
+			emitter.transform.localPosition = spillPoint + transform.parent.transform.rotation * Vector3.up * 0.02f;
+			emitter.stopped = false;
+			//TODO: modify emission rate for variable pouring speed
+		}
+		else {
+			if(emitter) {
+				emitter.stopped = true;
+			}
+		}
+		
+		// Adjust cube position to align bottom
 		cube.transform.position += Vector3.up * (cubeScale / 2);
 
 		// Perform boolean operation
