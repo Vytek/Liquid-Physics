@@ -30,7 +30,7 @@ public class LiquidManagerEditor : Editor {
 			EditorGUILayout.EndHorizontal();
 		}
 
-		// BUtton to add a new base
+		// Button to add a new base
 		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.LabelField("", GUILayout.ExpandWidth(true)); // empty label to align
 		if(GUILayout.Button("+", GUILayout.Width(20))) {
@@ -47,6 +47,8 @@ public class LiquidManagerEditor : Editor {
 			self.mixtures[i].name = EditorGUILayout.DelayedTextField(self.mixtures[i].name);
 			if(GUILayout.Button("x", GUILayout.Width(20))) {
 				self.mixtures.RemoveAt(i);
+				EditorGUILayout.EndHorizontal();
+				break;
 			}
 			EditorGUILayout.EndHorizontal();
 
@@ -54,8 +56,8 @@ public class LiquidManagerEditor : Editor {
 			for(int j = 0; j < self.mixtures[i].bases.Count; j++) {
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.LabelField("", GUILayout.Width(20)); // empty label to align
-				self.mixtures[i].parts[j] = EditorGUILayout.IntField(self.mixtures[i].parts[j], GUILayout.Width(20));
-				EditorGUILayout.LabelField(self.mixtures[i].bases[j].name);
+				self.mixtures[i].parts[j] = Mathf.Max(1, EditorGUILayout.IntField(self.mixtures[i].parts[j], GUILayout.Width(20)));
+				EditorGUILayout.LabelField(self.mixtures[i].bases[j].name, GUILayout.Width(0), GUILayout.ExpandWidth(true));
 				if(GUILayout.Button("x", GUILayout.Width(20))) {
 					self.mixtures[i].bases.RemoveAt(j);
 					self.mixtures[i].parts.RemoveAt(j);
@@ -77,10 +79,11 @@ public class LiquidManagerEditor : Editor {
 				select x.name
 			).ToArray();
 			if(options.Length > 0) {
+				EditorGUILayout.LabelField("", GUILayout.Width(20)); // empty label to align
 				self.mixtures[i].dropDownSelection = EditorGUILayout.Popup(self.mixtures[i].dropDownSelection, optionsNames);
 				if(GUILayout.Button("+", GUILayout.Width(20))) {
 					self.mixtures[i].bases.Add(options[self.mixtures[i].dropDownSelection]);
-					self.mixtures[i].parts.Add(0);
+					self.mixtures[i].parts.Add(1);
 					self.mixtures[i].dropDownSelection = 0;
 				}
 			}

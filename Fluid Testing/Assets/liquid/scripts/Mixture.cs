@@ -10,8 +10,8 @@ namespace Liquid {
 
 		// For LiquidManagerEditor
 		public int dropDownSelection = 0;
-		public List<Base> bases;
-		public List<int> parts;
+		public List<Base> bases = new List<Base>();
+		public List<int> parts = new List<int>();
 
 		private void Awake() {
 			
