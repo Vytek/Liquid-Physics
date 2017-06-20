@@ -50,25 +50,15 @@ public class LiquidManagerEditor : Editor {
 			}
 			EditorGUILayout.EndHorizontal();
 
-			/* 
-			 * Why does this happen every time this script is edited?
-			 * For some reason, the dictionaries are null again every time we edit this script...
-			 * But the names of the mixtures stay, so it's ONLY the dictonary...
-			 */
-			if(self.mixtures[i].components == null) {
-				self.mixtures[i].components = new Dictionary<Base, int>();
-				Debug.Log("No dictionary detected for this mixture. Making a new one.");
-			}
-
 			// Editors for this mixture's components
-			Base[] keys = self.mixtures[i].components.Keys.ToArray();
-			foreach(Base o in keys) {
+			for(int j = 0; j < self.mixtures[i].bases.Count; j++) {
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.LabelField("", GUILayout.Width(20)); // empty label to align
-				self.mixtures[i].components[o] = EditorGUILayout.IntField(self.mixtures[i].components[o], GUILayout.Width(20));
-				EditorGUILayout.LabelField(o.name);
+				self.mixtures[i].parts[j] = EditorGUILayout.IntField(self.mixtures[i].parts[j], GUILayout.Width(20));
+				EditorGUILayout.LabelField(self.mixtures[i].bases[j].name);
 				if(GUILayout.Button("x", GUILayout.Width(20))) {
-					self.mixtures[i].components.Remove(o);
+					self.mixtures[i].bases.RemoveAt(j);
+					self.mixtures[i].parts.RemoveAt(j);
 				}
 				EditorGUILayout.LabelField("", GUILayout.Width(20)); // empty label to align
 				EditorGUILayout.EndHorizontal();
@@ -79,7 +69,7 @@ public class LiquidManagerEditor : Editor {
 			EditorGUILayout.LabelField("", GUILayout.Width(20)); // empty label to align
 			Base[] options = (
 				from x in self.bases
-				where !self.mixtures[i].components.ContainsKey(x)
+				where !self.mixtures[i].bases.Contains(x)
 				select x
 			).ToArray();
 			string[] optionsNames = (
@@ -89,7 +79,8 @@ public class LiquidManagerEditor : Editor {
 			if(options.Length > 0) {
 				self.mixtures[i].dropDownSelection = EditorGUILayout.Popup(self.mixtures[i].dropDownSelection, optionsNames);
 				if(GUILayout.Button("+", GUILayout.Width(20))) {
-					self.mixtures[i].components.Add(options[self.mixtures[i].dropDownSelection], 0);
+					self.mixtures[i].bases.Add(options[self.mixtures[i].dropDownSelection]);
+					self.mixtures[i].parts.Add(0);
 					self.mixtures[i].dropDownSelection = 0;
 				}
 			}
