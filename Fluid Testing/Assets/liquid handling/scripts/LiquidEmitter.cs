@@ -31,7 +31,7 @@ public class LiquidEmitter : MonoBehaviour {
 			}
 			previousParticle = newParticle.GetComponent<LiquidParticle>();
 			if(origin) {
-				origin.fullness -= .02f;
+				origin.addLiquid(-1);
 			}
 		}
 

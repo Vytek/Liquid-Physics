@@ -118,7 +118,7 @@ public class LiquidParticle : MonoBehaviour {
 
 		LiquidVolume volume = c.gameObject.GetComponent<LiquidVolume>();
 		if(volume && volume != origin) {
-			volume.addLiquid(0.02f);
+			volume.addLiquid(1);
 			gameObject.layer = LayerMask.NameToLayer("LiquidParticleUsed");
 			neighbor = null;
 			GetComponent<MeshRenderer>().enabled = false;

@@ -1,4 +1,4 @@
 sceneSetups:
-- path: C:/Users/boiss/Downloads/pb_CSG-master/Assets/Demo Scene.unity
+- path: Assets/liquid handling/test scene/main.unity
   isLoaded: 1
   isActive: 1
