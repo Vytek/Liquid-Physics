@@ -12,9 +12,13 @@ namespace Liquid {
 		public float emissionRandomForce;
 		public GameObject liquidParticlePrefab;
 		public bool stopped;
+		public ScriptableObject emission;
 
 		// Private
 		private Particle previousParticle;
+
+		// For LiquidEmitterEditor
+		public bool automatic;
 
 		private void Awake() {
 

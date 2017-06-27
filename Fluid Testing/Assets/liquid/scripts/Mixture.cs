@@ -14,12 +14,13 @@ namespace Liquid {
 		public List<int> parts = new List<int>();
 
 		private void Awake() {
-			
+
 			// Create dictionary from LiquidManagerEditor lists
 			/*
 			 * Note: This is done because editing of a dictionary in the
 			 * inspector results in unwanted resetting of said dictionary.
 			 */
+			components = new Dictionary<Base, int>();
 			for(int i = 0; i < bases.Count; i++) {
 				components.Add(bases[i], parts[i]);
 			}
