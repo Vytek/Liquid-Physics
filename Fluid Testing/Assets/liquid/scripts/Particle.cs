@@ -11,6 +11,7 @@ namespace LiquidHandling {
 		public int sides;
 		public float breakThreshold,
 						radius;
+		public Liquid liquid;
 		[HideInInspector]
 		public Particle neighbor;
 		[HideInInspector]
@@ -26,6 +27,14 @@ namespace LiquidHandling {
 
 			// Destroy after a while
 			Destroy(gameObject, 5);
+		}
+
+		private void Start() {
+
+			// Colorize
+			if(liquid) {
+				GetComponent<MeshRenderer>().material.color = liquid.color;
+			}
 		}
 
 		private void FixedUpdate() {
@@ -120,7 +129,7 @@ namespace LiquidHandling {
 
 			Volume volume = c.gameObject.GetComponent<Volume>();
 			if(volume && volume != origin) {
-				volume.addLiquid(1);
+				volume.addLiquid(liquid, 1);
 				gameObject.layer = LayerMask.NameToLayer("LiquidParticleUsed");
 				neighbor = null;
 				GetComponent<MeshRenderer>().enabled = false;

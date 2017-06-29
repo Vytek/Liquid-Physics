@@ -32,6 +32,7 @@ namespace LiquidHandling {
 				newParticle.GetComponent<Rigidbody>().AddRelativeForce(new Vector3(emissionRandomForce * Random.Range(-1f, 1f), 0, emissionRandomForce) * Random.Range(-1f, 1f));
 				newParticle.GetComponent<Particle>().origin = this;
 				newParticle.name = "liquid particle (" + name + ")";
+				newParticle.GetComponent<Particle>().liquid = emission;
 				if(previousParticle) {
 					newParticle.GetComponent<Particle>().neighbor = previousParticle;
 				}

@@ -4,8 +4,5 @@ using UnityEngine;
 
 namespace LiquidHandling {
 	public class Base : Liquid {
-
-		// Public
-		public Color color;
 	}
 }

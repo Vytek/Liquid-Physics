@@ -9,11 +9,13 @@ namespace LiquidHandling {
 
 		// Public
 		public Mesh originalMesh;
-		public Material material; //TODO: recieve material from liquid type
+		public Material material;
 		public float yBottom, yTop, widthBottom, widthTop, cubeScale, minFullness, maxVolume;
 		[Range(0, 1)]
 		public float fullness;
 		public Emitter liquidEmitterPrefab;
+		[HideInInspector]
+		public Liquid liquid;
 
 		// Private
 		private MeshFilter meshFilter;
@@ -105,7 +107,11 @@ namespace LiquidHandling {
 				}
 				emitter.transform.localPosition = spillPoint + transform.parent.transform.rotation * Vector3.up * 0.02f;
 				emitter.stopped = false;
-				//TODO: modify emission rate for variable pouring speed
+				emitter.emission = liquid;
+				//TODO: modify emission rate for variable pouring speed?
+				//		but actually is this right? shouldn't it dump everything over the rim?
+				//		so we'll just give it a big number for now (50 is 5x normal)
+				emitter.emissionRate = 50;
 			}
 			else {
 				if(emitter) {
@@ -128,10 +134,39 @@ namespace LiquidHandling {
 			Destroy(cube);
 		}
 
-		public void addLiquid(/*Liquid l*/ float amount) {
+		public void addLiquid(float amount) {
+			addLiquid(null, amount);
+		}
+		public void addLiquid(Liquid l, float amount) {
+
+			// Update volume and fullness
 			volume = Mathf.Max(Mathf.Min(volume + amount, maxVolume), 0);
 			fullness = volume / maxVolume;
+
+			// Mix liquids
+			if(l != null) {
+
+				// Set liquid to the added liquid if there is no existing liquid
+				if(liquid == null) {
+					liquid = l;
+				}
+				else {
+
+					// Adding a Base to this liquid
+					if(l.GetType() == typeof(Base)) {
+						//TODO
+					}
+
+					// Adding a mixture to this liquid
+					else {
+						//TODO
+					}
+				}
+			}
+
+			// Update mesh and color
 			updateVolumeMesh();
+			GetComponent<MeshRenderer>().material.color = liquid.color;
 		}
 	}
 }

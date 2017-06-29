@@ -34,6 +34,9 @@ public class LiquidEmitterEditor : Editor {
 
 	public override void OnInspectorGUI() {
 
+		// Prevent Unity from resetting some stuff when you hit the play button
+		EditorUtility.SetDirty(target);
+
 		// Update inspector
 		serializedObject.Update();
 

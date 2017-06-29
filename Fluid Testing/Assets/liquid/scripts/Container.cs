@@ -5,6 +5,5 @@ using UnityEngine;
 namespace LiquidHandling {
 	[AddComponentMenu("Liquid/Container")]
 	public class Container : MonoBehaviour {
-
 	}
 }
