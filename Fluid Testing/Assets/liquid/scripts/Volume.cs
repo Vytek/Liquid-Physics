@@ -15,7 +15,7 @@ namespace LiquidHandling {
 		public float fullness;
 		public Emitter liquidEmitterPrefab;
 		[HideInInspector]
-		public Liquid liquid;
+		public Mixture liquid;
 
 		// Private
 		private MeshFilter meshFilter;
@@ -33,6 +33,7 @@ namespace LiquidHandling {
 			GetComponent<MeshCollider>().isTrigger = true;
 
 			// Set initial volume according to fullnesss
+			liquid = Mixture.DefaultMixture();
 			volume = maxVolume * fullness;
 			updateVolumeMesh();
 		}
@@ -146,21 +147,14 @@ namespace LiquidHandling {
 			// Mix liquids
 			if(l != null) {
 
-				// Set liquid to the added liquid if there is no existing liquid
-				if(liquid == null) {
-					liquid = l;
+				// Adding a Base to this liquid
+				if(l.GetType() == typeof(Base)) {
+					//TODO
 				}
+
+				// Adding a mixture to this liquid
 				else {
-
-					// Adding a Base to this liquid
-					if(l.GetType() == typeof(Base)) {
-						//TODO
-					}
-
-					// Adding a mixture to this liquid
-					else {
-						//TODO
-					}
+					//TODO
 				}
 			}
 

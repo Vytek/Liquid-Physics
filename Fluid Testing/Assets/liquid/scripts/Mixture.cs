@@ -48,5 +48,15 @@ namespace LiquidHandling {
 			}
 			color = new Color(r, g, b);
 		}
+
+		// Returns a mixture made only of the first Base in the liquid manager
+		// This is probably water in most cases
+		public static Mixture DefaultMixture() {
+			Manager manager = FindObjectOfType<Manager>();
+			Mixture defaultMixture = ScriptableObject.CreateInstance<Mixture>();
+			defaultMixture.bases.Add(manager.bases[0]);
+			defaultMixture.parts.Add(1);
+			return defaultMixture;
+		}
 	}
 }
