@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Liquid {
+namespace LiquidHandling {
 	[AddComponentMenu("Liquid/Manager")]
 	public class Manager : MonoBehaviour {
 

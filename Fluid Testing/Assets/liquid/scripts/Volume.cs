@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Parabox.CSG;
 
-namespace Liquid {
+namespace LiquidHandling {
 	[AddComponentMenu("Liquid/Volume")]
 	public class Volume : MonoBehaviour {
 

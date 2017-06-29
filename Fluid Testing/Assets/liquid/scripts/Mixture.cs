@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Liquid {
-	public class Mixture : ScriptableObject {
+namespace LiquidHandling {
+	public class Mixture : Liquid {
 
 		// Public
 		public Dictionary<Base, int> components;

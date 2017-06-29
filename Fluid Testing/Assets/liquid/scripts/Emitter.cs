@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Liquid {
+namespace LiquidHandling {
 	[AddComponentMenu("Liquid/Emitter")]
 	public class Emitter : MonoBehaviour {
 
@@ -12,7 +12,7 @@ namespace Liquid {
 		public float emissionRandomForce;
 		public GameObject liquidParticlePrefab;
 		public bool stopped;
-		public ScriptableObject emission;
+		public Liquid emission;
 
 		// Private
 		private Particle previousParticle;

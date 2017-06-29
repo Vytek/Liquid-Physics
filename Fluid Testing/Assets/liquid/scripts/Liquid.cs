@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace LiquidHandling {
-	public class Base : Liquid {
-
-		// Public
-		public Color color;
+	public class Liquid : ScriptableObject {
+		// Do we even really need this parent class?
 	}
 }
