@@ -25,6 +25,7 @@ namespace LiquidHandling {
 		private MeshCollider meshCollider;
 		private Emitter emitter;
 		private float volume;
+		private Quaternion previousRotation;
 
 		private void Awake() {
 
@@ -38,6 +39,15 @@ namespace LiquidHandling {
 			liquid = Mixture.DefaultMixture();
 			volume = maxVolume * fullness;
 			updateVolumeMesh();
+		}
+
+		private void FixedUpdate() {
+
+			// Only update volume mesh if rotated more than a half degree
+			if(Quaternion.Angle(transform.rotation, previousRotation) > 0.5f) {
+				previousRotation = transform.rotation;
+				updateVolumeMesh();
+			}
 		}
 
 		private void updateVolumeMesh() {
@@ -159,7 +169,7 @@ namespace LiquidHandling {
 					liquid = Mixture.Mix(liquid, volume, (Mixture)l, amount);
 				}
 
-				debugText.text = volume + " / " + maxVolume + " (" + (fullness * 100) + "%)\n";
+				debugText.text = Mathf.Floor(fullness * 100) + "% (" + volume + " / " + maxVolume + ")\n";
 				foreach(KeyValuePair<Base, float> o in liquid.components) {
 					debugText.text += Mathf.Floor(o.Value * 100) + "%\t" + o.Key.name + "\n";
 				}
