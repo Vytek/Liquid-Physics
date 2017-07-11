@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 namespace LiquidHandling {
 	public class Mixture : Liquid {
@@ -11,7 +12,7 @@ namespace LiquidHandling {
 		// For LiquidManagerEditor
 		public int dropDownSelection = 0;
 		public List<Base> bases = new List<Base>();
-		public List<int> parts = new List<int>();
+		public List<float> parts = new List<float>();
 
 		private void Awake() {
 
@@ -32,8 +33,8 @@ namespace LiquidHandling {
 		public void updateColor() {
 
 			// Total up the parts
-			int partsTotal = 0;
-			foreach(int o in components.Values) {
+			float partsTotal = 0;
+			foreach(float o in components.Values) {
 				partsTotal += o;
 			}
 
@@ -53,10 +54,55 @@ namespace LiquidHandling {
 		// This is probably water in most cases
 		public static Mixture DefaultMixture() {
 			Manager manager = FindObjectOfType<Manager>();
-			Mixture defaultMixture = ScriptableObject.CreateInstance<Mixture>();
-			defaultMixture.bases.Add(manager.bases[0]);
-			defaultMixture.parts.Add(1);
-			return defaultMixture;
+			return Mixture.MixtureFromBase(manager.bases[0]);
+		}
+
+		// Returns a mixture made entirely of one Base
+		// Useful for mixing a Base into a Mixture
+		public static Mixture MixtureFromBase(Base o) {
+			Mixture mixture = CreateInstance<Mixture>();
+			//mixture.bases.Add(o);
+			//mixture.parts.Add(1);
+			mixture.components.Add(o, 1);
+			return mixture;
+		}
+
+		public static Mixture Mix(Mixture a, float amountA, Mixture b, float amountB) {
+
+			float totalAmount = amountA + amountB;
+
+			float totalPartsA = 0, totalPartsB = 0;
+			foreach(float o in a.components.Values) {
+				totalPartsA += o;
+			}
+			foreach(float o in b.components.Values) {
+				totalPartsB += o;
+			}
+
+			Base[] bases = (
+				from x in a.components.Keys.Union(b.components.Keys)
+				select x
+			).Distinct().ToArray();
+
+			Mixture mixture = CreateInstance<Mixture>();
+			foreach(Base o in bases) {
+				/*
+				float parts = 0;
+				parts += a.components.ContainsKey(o) ? (a.components[o] / totalPartsA) * totalAmount: 0;
+				parts += b.components.ContainsKey(o) ? (b.components[o] / totalPartsB) * totalAmount: 0;
+				mixture.components.Add(o, parts);
+				*/
+				float percentOfA = a.components.ContainsKey(o) ? a.components[o] / totalPartsA : 0;
+				float percentOfB = b.components.ContainsKey(o) ? b.components[o] / totalPartsB : 0;
+				float absoluteA = percentOfA * amountA;
+				float absoluteB = percentOfB * amountB;
+				float absoluteTotal = (absoluteA + absoluteB) / totalAmount;
+				mixture.components.Add(o, absoluteTotal);
+			}
+
+			mixture.updateColor();
+
+			return mixture;
 		}
 	}
 }

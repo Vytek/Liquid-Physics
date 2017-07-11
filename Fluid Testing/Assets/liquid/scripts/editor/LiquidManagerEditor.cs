@@ -56,7 +56,7 @@ public class LiquidManagerEditor : Editor {
 			for(int j = 0; j < self.mixtures[i].bases.Count; j++) {
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.LabelField("", GUILayout.Width(20)); // empty label to align
-				self.mixtures[i].parts[j] = Mathf.Max(1, EditorGUILayout.IntField(self.mixtures[i].parts[j], GUILayout.Width(20)));
+				self.mixtures[i].parts[j] = Mathf.Max(1, EditorGUILayout.FloatField(self.mixtures[i].parts[j], GUILayout.Width(20)));
 				EditorGUILayout.LabelField(self.mixtures[i].bases[j].name, GUILayout.Width(0), GUILayout.ExpandWidth(true));
 				if(GUILayout.Button("x", GUILayout.Width(20))) {
 					self.mixtures[i].bases.RemoveAt(j);

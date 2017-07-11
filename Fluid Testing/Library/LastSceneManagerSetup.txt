@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/liquid handling/test scene/main.unity
+- path: Assets/liquid/demo/scenes/main.unity
   isLoaded: 1
   isActive: 1

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Parabox.CSG;
+using UnityEngine.UI;
 
 namespace LiquidHandling {
 	[AddComponentMenu("Liquid/Volume")]
@@ -16,6 +17,7 @@ namespace LiquidHandling {
 		public Emitter liquidEmitterPrefab;
 		[HideInInspector]
 		public Mixture liquid;
+		public Text debugText;
 
 		// Private
 		private MeshFilter meshFilter;
@@ -149,12 +151,17 @@ namespace LiquidHandling {
 
 				// Adding a Base to this liquid
 				if(l.GetType() == typeof(Base)) {
-					//TODO
+					liquid = Mixture.Mix(liquid, volume, Mixture.MixtureFromBase((Base)l), amount);
 				}
 
 				// Adding a mixture to this liquid
 				else {
-					//TODO
+					liquid = Mixture.Mix(liquid, volume, (Mixture)l, amount);
+				}
+
+				debugText.text = volume + " / " + maxVolume + " (" + (fullness * 100) + "%)\n";
+				foreach(KeyValuePair<Base, float> o in liquid.components) {
+					debugText.text += Mathf.Floor(o.Value * 100) + "%\t" + o.Key.name + "\n";
 				}
 			}
 
