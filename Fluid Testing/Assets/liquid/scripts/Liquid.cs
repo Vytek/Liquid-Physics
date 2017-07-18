@@ -7,5 +7,8 @@ namespace LiquidHandling {
 
 		// Public
 		public Color color;
+
+		// Return either a Mixture regardless of whether it is a Base or Mixture
+		public abstract Mixture ToMixture();
 	}
 }

@@ -59,8 +59,11 @@ namespace LiquidHandling {
 			transform.localRotation = Quaternion.identity;
 
 			// Check whether container is inverted (rotated more than 90deg)
-			bool inverted = (transform.parent.transform.rotation.eulerAngles.x > 90 && transform.parent.transform.rotation.eulerAngles.x < 360 - 90)
-			|| (transform.parent.transform.rotation.eulerAngles.z > 90 && transform.parent.transform.rotation.eulerAngles.z < 360 - 90);
+			float	rotationX = transform.parent.transform.rotation.eulerAngles.x,
+					rotationZ = transform.parent.transform.rotation.eulerAngles.z,
+					pouringAngle = 90;
+			bool inverted = (rotationX > pouringAngle && rotationX < 360 - pouringAngle)
+						 || (rotationZ > pouringAngle && rotationZ < 360 - pouringAngle);
 
 			// Find the center of the bottom and top faces of this cylindrical volume
 			Vector3 bottomCenter = Vector3.up;
@@ -159,15 +162,7 @@ namespace LiquidHandling {
 			// Mix liquids
 			if(l != null) {
 
-				// Adding a Base to this liquid
-				if(l.GetType() == typeof(Base)) {
-					liquid = Mixture.Mix(liquid, volume, Mixture.MixtureFromBase((Base)l), amount);
-				}
-
-				// Adding a mixture to this liquid
-				else {
-					liquid = Mixture.Mix(liquid, volume, (Mixture)l, amount);
-				}
+				liquid = Mixture.Mix(liquid.ToMixture(), volume, l.ToMixture(), amount);
 
 				debugText.text = Mathf.Floor(fullness * 100) + "% (" + volume + " / " + maxVolume + ")\n";
 				foreach(KeyValuePair<Base, float> o in liquid.components) {

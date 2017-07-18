@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System;
 
 namespace LiquidHandling {
 	public class Mixture : Liquid {
@@ -30,6 +31,10 @@ namespace LiquidHandling {
 			updateColor();
 		}
 
+		public override Mixture ToMixture() {
+			return this;
+		}
+
 		public void updateColor() {
 
 			// Total up the parts
@@ -51,26 +56,16 @@ namespace LiquidHandling {
 		}
 
 		// Returns a mixture made only of the first Base in the liquid manager
-		// This is probably water in most cases
+		// This is probably water, unlesss somebody changes that
 		public static Mixture DefaultMixture() {
 			Manager manager = FindObjectOfType<Manager>();
-			return Mixture.MixtureFromBase(manager.bases[0]);
-		}
-
-		// Returns a mixture made entirely of one Base
-		// Useful for mixing a Base into a Mixture
-		public static Mixture MixtureFromBase(Base o) {
-			Mixture mixture = CreateInstance<Mixture>();
-			//mixture.bases.Add(o);
-			//mixture.parts.Add(1);
-			mixture.components.Add(o, 1);
-			return mixture;
+			return manager.bases[0].ToMixture();
 		}
 
 		public static Mixture Mix(Mixture a, float amountA, Mixture b, float amountB) {
 
+			// Get total amount between a and b
 			float totalAmount = amountA + amountB;
-
 			float totalPartsA = 0, totalPartsB = 0;
 			foreach(float o in a.components.Values) {
 				totalPartsA += o;
@@ -79,19 +74,15 @@ namespace LiquidHandling {
 				totalPartsB += o;
 			}
 
+			// Get all bases
 			Base[] bases = (
 				from x in a.components.Keys.Union(b.components.Keys)
 				select x
 			).Distinct().ToArray();
 
+			// Mix
 			Mixture mixture = CreateInstance<Mixture>();
 			foreach(Base o in bases) {
-				/*
-				float parts = 0;
-				parts += a.components.ContainsKey(o) ? (a.components[o] / totalPartsA) * totalAmount: 0;
-				parts += b.components.ContainsKey(o) ? (b.components[o] / totalPartsB) * totalAmount: 0;
-				mixture.components.Add(o, parts);
-				*/
 				float percentOfA = a.components.ContainsKey(o) ? a.components[o] / totalPartsA : 0;
 				float percentOfB = b.components.ContainsKey(o) ? b.components[o] / totalPartsB : 0;
 				float absoluteA = percentOfA * amountA;
@@ -100,8 +91,10 @@ namespace LiquidHandling {
 				mixture.components.Add(o, absoluteTotal);
 			}
 
+			// Update color
 			mixture.updateColor();
 
+			// Return the new mixture
 			return mixture;
 		}
 	}
