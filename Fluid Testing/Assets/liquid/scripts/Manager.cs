@@ -22,17 +22,6 @@ namespace LiquidHandling {
 			Mixtures = mixtures;
 		}
 
-		void Start() {
-
-			// A little test
-			//TODO: Remove
-			List<Liquid> candidates = new List<Liquid>();
-			candidates.AddRange(Mixtures.ToArray());
-			candidates.AddRange(Bases.ToArray());
-			Liquid test = candidates[Random.Range(0, candidates.Count)];
-			Liquid bestMatchTest = BestMatch(test);
-		}
-
 		// Return which mixture most resembles a liquid
 		public static Liquid BestMatch(Liquid a) {
 
@@ -53,12 +42,15 @@ namespace LiquidHandling {
 			}
 
 			// Friendly debug message
+			/*
 			Debug.Log(string.Format(
-				"{0}\t'{1}' best match is '{2}'\n",
-				bestScore,
+				"{0:0.}%\t'{1}' best match is '{2}'\n",
+				bestScore * 100,
 				a.name,
 				bestMatch ? bestMatch.name : "null"
 			));
+			Debug.Log("\n\n");
+			*/
 
 			// Return the best match
 			return bestMatch;
@@ -66,8 +58,9 @@ namespace LiquidHandling {
 
 		// Return a float representing how similar two liquids are
 		public static float Compare(Mixture a, Mixture b) {
-			
+
 			// Get all bases
+			
 			Base[] bases = (
 				from x in a.components.Keys.Union(b.components.Keys)
 				select x
@@ -83,20 +76,37 @@ namespace LiquidHandling {
 			}
 
 			// Calculate score
+			/*
+			string debugString = "";
+			*/
 			float score = 1;
 			foreach(Base o in bases) {
 				float percentOfA = a.components.ContainsKey(o) ? a.components[o] / totalPartsA : 0;
 				float percentOfB = b.components.ContainsKey(o) ? b.components[o] / totalPartsB : 0;
 				score -= Mathf.Abs(percentOfA - percentOfB) / 2;
+				/*
+				debugString += string.Format(
+					"\n{0}: {1:0.}% - {2:0.}% ---> -{3:0.}",
+					o.name,
+					percentOfA * 100,
+					percentOfB * 100,
+					Mathf.Abs(percentOfA - percentOfB) / 2
+				);
+				*/
 			}
 
 			// Friendly debug message
-			Debug.Log(string.Format(
-				"{0}\t'{1}' compared to '{2}'\n",
-				score,
-				a.name,
-				b.name
-			));
+			/*
+			if(score > -100.0f) {
+				Debug.Log(string.Format(
+					"{0:0.}%\t'{1}' compared to '{2}'\n{3}\n\n\n\n\n\n",
+					score * 100,
+					a.name,
+					b.name,
+					debugString
+				));
+			}
+			*/
 
 			// Return score
 			return score;

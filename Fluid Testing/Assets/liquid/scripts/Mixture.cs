@@ -82,6 +82,8 @@ namespace LiquidHandling {
 
 			// Mix
 			Mixture mixture = CreateInstance<Mixture>();
+			mixture.name = "custom";
+			string debugMessage = "Mixing:";
 			foreach(Base o in bases) {
 				float percentOfA = a.components.ContainsKey(o) ? a.components[o] / totalPartsA : 0;
 				float percentOfB = b.components.ContainsKey(o) ? b.components[o] / totalPartsB : 0;
@@ -89,7 +91,15 @@ namespace LiquidHandling {
 				float absoluteB = percentOfB * amountB;
 				float absoluteTotal = (absoluteA + absoluteB) / totalAmount;
 				mixture.components.Add(o, absoluteTotal);
+
+				// Friendly debug message
+				debugMessage += string.Format(
+					"\n{0}: {1:0.0}%",
+					o.name,
+					absoluteTotal * 100
+				);
 			}
+			//Debug.Log(debugMessage);
 
 			// Update color
 			mixture.updateColor();
