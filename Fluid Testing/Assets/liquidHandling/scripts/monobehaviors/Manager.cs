@@ -4,7 +4,7 @@ using UnityEngine;
 using System.Linq;
 
 namespace LiquidHandling {
-	[AddComponentMenu("Liquid/Manager")]
+	[AddComponentMenu("Liquid Handling/Manager")]
 	public class Manager : MonoBehaviour {
 
 		// Static

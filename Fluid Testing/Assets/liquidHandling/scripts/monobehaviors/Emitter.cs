@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace LiquidHandling {
-	[AddComponentMenu("Liquid/Emitter")]
+	[AddComponentMenu("Liquid Handling/Emitter")]
 	public class Emitter : MonoBehaviour {
 
 		// Public

@@ -4,7 +4,7 @@ using UnityEngine;
 using Parabox.CSG;
 
 namespace LiquidHandling {
-	[AddComponentMenu("Liquid/Volume")]
+	[AddComponentMenu("Liquid Handling/Volume")]
 	public class Volume : MonoBehaviour {
 
 		// Public

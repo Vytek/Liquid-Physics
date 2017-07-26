@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace LiquidHandling {
-	[AddComponentMenu("Liquid/Particle")]
+	[AddComponentMenu("Liquid Handling/Particle")]
 	public class Particle : MonoBehaviour {
 
 		// Public
